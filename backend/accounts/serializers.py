@@ -11,15 +11,18 @@ class UserAccountSerializer(serializers.ModelSerializer):
         fields = ['name', 'email', 'password']
 
     def validate(self, data):
+        user = User(**data)
         password = data.get('password')
 
         try:
-            validate_password(password)
+            validate_password(password, user)
         except exceptions.ValidationError as e:
             serializers_errors = serializers.as_serializer_error(e)
             raise exceptions.ValidationError(
                 {'password': serializers_errors['non_field_errors']}
             )
+
+        return data
 
     def create(self, validated_data):
         user = User.objects.create_user(
