@@ -58,3 +58,13 @@ class UserAccountListAPIView(mixins.ListModelMixin,
     def get_queryset(self, *args, **kwargs):
         qs = super().get_queryset(*args, **kwargs)
         return qs
+
+
+class RetrieveUserView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = self.request.user
+        user = UserSerializer(user)
+
+        return Response(user.data, status=status.HTTP_200_OK)
